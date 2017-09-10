@@ -11,12 +11,11 @@ if($ext.StartsWith(".")) {
     $ext = $ext.Replace(".", "")
 }
 
+Write-Host "Changing the extensions of all files to .$ext .." -ForegroundColor Blue
+
 Get-ChildItem . -Exclude *.ps1 | 
     Foreach-Object {
-        Write-Host "Changing the extensions of all files to .$ext .." -ForegroundColor Blue
-        
         Rename-Item $_.FullName "$($_.FullName).$ext"
-        # Write-Host $_.FullName
-        
-        Write-Host "DONE." -ForegroundColor Blue
     }
+
+Write-Host "DONE." -ForegroundColor Blue

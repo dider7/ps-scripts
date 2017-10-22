@@ -15,12 +15,22 @@ Param(
 
 Import-Module .\functions.psm1
 
+[int] $MinFileSize = 102400
+[string] $ext = "jpg"
+[int] $CopyCount = 0
+
 $WinSpotlightBGDir = "$(Get-Item "C:\Users\$user\AppData\Local\Packages\Microsoft.Windows.ContentDeliveryManager_*")\LocalState\Assets"
 
-Write-Host "Copying all files to $destination .." -ForegroundColor Blue
-
-Copy-Item "$WinSpotlightBGDir\*" -Destination $destination -Force
-
-ChangeFileExtensions $destination jpg
+Get-ChildItem "$WinSpotlightBGDir" | 
+    Where-Object { !(Test-Path "$destination\$($_.BaseName).$ext") -and $_.Length -gt $MinFileSize } | 
+    Foreach-Object {
+        Write-Host "Copying $($_.FullName) to $destination .." -ForegroundColor Blue
+        Copy-Item $_.FullName -Destination $destination -Force
+        $CopyCount++
+    }
+Write-Host "$CopyCount files copied" -ForegroundColor Blue
+if($CopyCount -gt 0) {
+    ChangeFileExtensions $destination $ext *.ps1, *.psm1
+}
 
 Write-Host "DONE." -ForegroundColor Green

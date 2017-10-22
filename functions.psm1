@@ -43,11 +43,10 @@ function ChangeFileExtensions {
         $ext = $ext.Replace(".", "")
     }
 
-    Write-Host "Changing the extensions of all files to .$ext .." -ForegroundColor Blue
-
     Get-ChildItem $location -Exclude $exclude | 
         Foreach-Object {
-            Rename-Item $_.FullName "$($_.FullName).$ext"
+            Write-Host "Changing the extension of $($_.FullName) to .$ext .." -ForegroundColor Blue
+            Rename-Item $_.FullName "$($_.BaseName).$ext"
         }
 
     Write-Host "Finished changing the extensions of all files." -ForegroundColor Blue
